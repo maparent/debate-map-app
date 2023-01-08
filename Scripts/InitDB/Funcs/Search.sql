@@ -1,3 +1,5 @@
+-- Note: This is using materialized tsvectors, but the calculated version is left in comments.
+
 CREATE OR REPLACE FUNCTION app_public.global_search(
 	query text,
 	slimit INTEGER DEFAULT 20, soffset INTEGER DEFAULT 0,

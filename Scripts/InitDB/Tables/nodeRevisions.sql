@@ -21,8 +21,10 @@ DROP INDEX IF EXISTS node_revisions_node_idx;
 CREATE INDEX node_revisions_node_idx ON app_public."nodeRevisions" USING btree (node);
 
 -- indexes for tsvectors
---DROP INDEX IF EXISTS node_revisions_phrasing_tsvector_idx;
---CREATE INDEX node_revisions_phrasing_tsvector_idx ON app_public."nodeRevisions" USING gin (phrasing_tsvector);
+-- We could just use computed index (in comments) and not materialize the ts_vectors in the table,
+-- but the size cost is small and the speed difference notable (factor of 2-3)
+-- at least at current DB scale.
+
 DROP INDEX IF EXISTS node_revisions_phrasing_en_idx;
 CREATE INDEX node_revisions_phrasing_en_idx ON app_public."nodeRevisions" USING gin (phrasing_tsvector) WHERE ("replacedBy" IS NULL);
 -- CREATE INDEX node_revisions_phrasing_en_idx ON app_public."nodeRevisions" USING gin (app_public.rev_phrasing_to_tsv(phrasing)) WHERE ("replacedBy" IS NULL);
