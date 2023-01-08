@@ -10,6 +10,7 @@ CREATE TABLE app_public."nodePhrasings" (
 	note text,
 	terms jsonb[] NOT NULL,
 	"references" text[] NOT NULL,
+	phrasing_tsvector tsvector GENERATED ALWAYS AS (app_public.phrasings_to_tsv(text_base, text_question)) STORED NOT NULL,
 	"c_accessPolicyTargets" text[] NOT NULL
 );
 ALTER TABLE ONLY app_public."nodePhrasings" ADD CONSTRAINT "v1_draft_nodePhrasings_pkey" PRIMARY KEY (id);
@@ -21,4 +22,5 @@ CREATE INDEX node_phrasings_node_idx ON app_public."nodePhrasings" USING btree (
 
 -- indexes for tsvectors
 DROP INDEX IF EXISTS node_phrasings_text_en_idx;
-CREATE INDEX node_phrasings_text_en_idx ON app_public."nodePhrasings" USING gin (app_public.phrasings_to_tsv(text_base, text_question));
+CREATE INDEX node_phrasings_text_en_idx ON app_public."nodePhrasings" USING gin (phrasing_tsvector);
+-- CREATE INDEX node_phrasings_text_en_idx ON app_public."nodePhrasings" USING gin (app_public.phrasings_to_tsv(text_base, text_question));
